@@ -45,9 +45,15 @@ module ActiveSnapshot
       end
     end
 
-    def build_snapshot_item(instance, child_group_name: nil)
+    def build_snapshot_item(instance, child_group_name: nil, snapshot_item_transformation: nil)
+      object = if snapshot_item_transformation.is_a?(Proc)
+                 snapshot_item_transformation.call(instance)
+               else
+                 instance.attributes
+               end
+
       self.snapshot_items.new({
-        object: instance.attributes,
+        object: object,
         item_id: instance.id,
         item_type: instance.class.name,
         child_group_name: child_group_name,

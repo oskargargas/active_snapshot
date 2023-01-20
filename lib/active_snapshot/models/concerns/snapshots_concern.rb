@@ -31,7 +31,11 @@ module ActiveSnapshot
       if snapshot_children
         snapshot_children.each do |child_group_name, h|
           h[:records].each do |child_item|
-            snapshot_items << snapshot.build_snapshot_item(child_item, child_group_name: child_group_name)
+            snapshot_items << snapshot.build_snapshot_item(
+              child_item,
+              child_group_name: child_group_name,
+              snapshot_item_transformation: has_snapshot_item_transformation
+            )
           end
         end
       end
@@ -50,7 +54,12 @@ module ActiveSnapshot
           @snapshot_children_proc
         end
       end
+    end
 
+    def has_snapshot_item_transformation
+      return nil unless self.respond_to?(:snapshot_item_transformation)
+
+      ->(instance) { self.snapshot_item_transformation(instance) }
     end
 
     def children_to_snapshot
