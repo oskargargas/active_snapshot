@@ -108,18 +108,18 @@ module ActiveSnapshot
       reified_parent = nil
 
       snapshot_items.each do |si|
-        reified_item = si.item_type.constantize.new(si.object)
+        snapshot_item_class = si.item_type.constantize
+        attributes_hash = si.object.slice(*snapshot_item_class.attribute_names)
 
+        reified_item = snapshot_item_class.new(attributes_hash)
         reified_item.readonly!
 
         key = si.child_group_name
 
         if key
           reified_children_hash[key] ||= []
-
           reified_children_hash[key] << reified_item
-
-        elsif self.item_id == si.item_id && (self.item_type == si.item_type || si.item_type.constantize.new.is_a?(self.item_type.constantize))
+        elsif self.item_id == si.item_id && (self.item_type == si.item_type || snapshot_item_class.new.is_a?(self.item_type.constantize))
           reified_parent = reified_item
         end
       end
