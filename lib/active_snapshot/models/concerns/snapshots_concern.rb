@@ -34,7 +34,7 @@ module ActiveSnapshot
             snapshot_items << snapshot.build_snapshot_item(
               child_item,
               child_group_name: child_group_name,
-              snapshot_item_transformation: has_snapshot_item_transformation
+              snapshot_item_attributes: has_snapshot_item_attributes
             )
           end
         end
@@ -56,10 +56,10 @@ module ActiveSnapshot
       end
     end
 
-    def has_snapshot_item_transformation
-      return nil unless self.respond_to?(:snapshot_item_transformation)
+    def has_snapshot_item_attributes
+      return nil unless self.respond_to?(:snapshot_item_attributes)
 
-      ->(instance) { self.snapshot_item_transformation(instance) }
+      ->(instance) { self.snapshot_item_attributes(instance) }
     end
 
     def children_to_snapshot
