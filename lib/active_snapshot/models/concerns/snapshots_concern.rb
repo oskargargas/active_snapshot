@@ -24,7 +24,7 @@ module ActiveSnapshot
 
       snapshot_items = []
 
-      snapshot_items << snapshot.build_snapshot_item(self)
+      snapshot_items << snapshot.build_snapshot_item(self, snapshot_item_attributes: has_snapshot_item_attributes)
 
       snapshot_children = self.children_to_snapshot
 
