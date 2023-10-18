@@ -2,7 +2,15 @@ CHANGELOG
 ---------
 
 - **Unreleased**
-  * [View Diff](https://github.com/westonganger/active_snapshot/compare/v0.3.0...master)
+  * [View Diff](https://github.com/westonganger/active_snapshot/compare/v0.3.2...master)
+  * Nothing yet
+
+- **v0.3.2** - Oct 17, 2023
+  * [View Diff](https://github.com/westonganger/active_snapshot/compare/v0.3.1...v0.3.2)
+  * [#43](https://github.com/westonganger/active_snapshot/pull/43) - Fix unique index error in generated DB migration
+
+- **v0.3.1** - August 4, 2023
+  * [View Diff](https://github.com/westonganger/active_snapshot/compare/v0.3.0...v0.3.1)
   * [#36](https://github.com/westonganger/active_snapshot/pull/36) - Allow ActiveRecord to be lazy loaded using `ActiveSupport.on_load`
   * [#35](https://github.com/westonganger/active_snapshot/pull/35) - Add `optional: true` to the Snapshot `belongs_to :user` relationship
   * [#39](https://github.com/westonganger/active_snapshot/pull/39) - Remove redundant validation on SnapshotItem for item_type

@@ -3,13 +3,15 @@ class CreateSnapshotsTables < ActiveRecord::Migration::Current
   def change
     create_table :snapshots do |t|
       t.belongs_to :item, polymorphic: true, null: false, index: true
-      t.string :identifier, unique: true, index: true
       t.belongs_to :user, polymorphic: true
 
-      if ActiveSnapshot.config.storage_method_native_json?
-        t.json :metadata
+      t.string :identifier, index: true
+      t.index [:identifier, :item_id, :item_type], unique: true
+
+      if ActiveSnapshot.config.storage_method == 'native_json'
+        t.json :metadata, null: false
       else
-        t.text :metadata
+        t.text :metadata, null: false
       end
 
       t.datetime :created_at, null: false
@@ -17,9 +19,10 @@ class CreateSnapshotsTables < ActiveRecord::Migration::Current
 
     create_table :snapshot_items do |t|
       t.belongs_to :snapshot, null: false, index: true
-      t.belongs_to :item, polymorphic: true, null: false, unique: [:snapshot_id], index: true
+      t.belongs_to :item, polymorphic: true, null: false, index: true
+      t.index [:snapshot_id, :item_id, :item_type], unique: true
 
-      if ActiveSnapshot.config.storage_method_native_json?
+      if ActiveSnapshot.config.storage_method == 'native_json'
         t.json :object, null: false
       else
         t.text :object, null: false
