@@ -3,11 +3,14 @@ CHANGELOG
 
 - **Unreleased**
   * [View Diff](https://github.com/westonganger/active_snapshot/compare/v0.4.0...master)
-  * Nothing yet
+  * [#56](https://github.com/westonganger/active_snapshot/pull/56) - Add presence validation for object in SnapshotItem model
+  * [#57](https://github.com/westonganger/active_snapshot/pull/57) - Add readonly argument to Shapshot#fetch_reified_items
+  * [#53](https://github.com/westonganger/active_snapshot/pull/53) - Allow `ActiveSnapshot.config` to be called before ActiveRecord `on_load` hook has occurred
+  * [#52](https://github.com/westonganger/active_snapshot/pull/52) - Remove deprecated positional argument on `create_snapshot!`
 
 - **v0.4.0** - July 23, 2024
   * [View Diff](https://github.com/westonganger/active_snapshot/compare/v0.3.2...v0.4.0)
-  * [#44](https://github.com/westonganger/active_snapshot/pull/44) - Remove dependency on activerecord-import with vanilla ActiveRecord upsert_all
+  * [#44](https://github.com/westonganger/active_snapshot/pull/44) - Remove dependency on `activerecord-import` with vanilla ActiveRecord `upsert_all`
 
 - **v0.3.2** - Oct 17, 2023
   * [View Diff](https://github.com/westonganger/active_snapshot/compare/v0.3.1...v0.3.2)

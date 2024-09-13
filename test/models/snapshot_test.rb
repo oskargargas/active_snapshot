@@ -42,7 +42,7 @@ class SnapshotTest < ActiveSupport::TestCase
     snapshot = shared_post.snapshots.first
 
     instance = @snapshot_klass.new
-      
+
     instance.valid?
 
     [:item_id, :item_type].each do |attr|
@@ -67,7 +67,11 @@ class SnapshotTest < ActiveSupport::TestCase
 
     @snapshot.metadata = {foo: :bar}
 
-    assert_equal "bar", @snapshot.metadata['foo']
+    if ActiveSnapshot.config.storage_method_yaml?
+      assert_equal :bar, @snapshot.metadata.fetch(:foo)
+    else
+      assert_equal "bar", @snapshot.metadata.fetch("foo")
+    end
   end
 
   def test_build_snapshot_item
@@ -90,7 +94,7 @@ class SnapshotTest < ActiveSupport::TestCase
     @snapshot.restore!
   end
 
-  def test_fetch_reified_items
+  def test_fetch_reified_items_with_readonly
     @snapshot = @snapshot_klass.first
 
     reified_items = @snapshot.fetch_reified_items
@@ -103,7 +107,23 @@ class SnapshotTest < ActiveSupport::TestCase
 
     assert children_hash.is_a?(Hash)
 
-    assert children_hash.all?{|k,v| v.all?{|x| x.readonly?} }
+    assert children_hash.values.all?(&:readonly?)
+  end
+
+  def test_fetch_reified_items_without_readonly
+    @snapshot = @snapshot_klass.first
+
+    reified_items = @snapshot.fetch_reified_items(readonly: false)
+
+    assert reified_items.is_a?(Array)
+
+    assert_not reified_items.first.readonly?
+
+    children_hash = reified_items.last
+
+    assert children_hash.is_a?(Hash)
+
+    assert children_hash.values.all?(&:readonly?)
   end
 
   def test_fetch_reified_items_with_sti_class
@@ -139,7 +159,11 @@ class SnapshotTest < ActiveSupport::TestCase
     prev_time_attrs = prev_attrs.extract!("created_at","updated_at")
     new_time_attrs = new_attrs.extract!("created_at","updated_at")
 
-    assert_equal new_time_attrs.values.map{|x| x.round(3)}, new_time_attrs.values
+    if ActiveSnapshot.config.storage_method_yaml?
+      assert_equal new_time_attrs.values.map{|x| x.round(6)}, new_time_attrs.values
+    else
+      assert_equal new_time_attrs.values.map{|x| x.round(3)}, new_time_attrs.values
+    end
 
     ### rounding to 3 sometimes fails due to millisecond precision so we just test for 2 decimal places here
     assert_equal prev_time_attrs.values.map{|x| x.round(2)}, new_time_attrs.values.map{|x| x.round(2)}

@@ -102,7 +102,7 @@ module ActiveSnapshot
       return true
     end
 
-    def fetch_reified_items
+    def fetch_reified_items(readonly: true)
       reified_children_hash = {}.with_indifferent_access
 
       reified_parent = nil
@@ -112,7 +112,9 @@ module ActiveSnapshot
         attributes_hash = si.object.slice(*snapshot_item_class.attribute_names)
 
         reified_item = snapshot_item_class.new(attributes_hash)
-        reified_item.readonly!
+        if readonly
+          reified_item.readonly!
+        end
 
         key = si.child_group_name
 
