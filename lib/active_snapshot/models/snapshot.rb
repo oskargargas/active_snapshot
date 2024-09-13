@@ -102,14 +102,27 @@ module ActiveSnapshot
       return true
     end
 
-    def fetch_reified_items(readonly: true)
+    def fetch_reified_items(readonly: true, attributes_mapping: {})
       reified_children_hash = {}.with_indifferent_access
 
       reified_parent = nil
 
       snapshot_items.each do |si|
-        snapshot_item_class = si.item_type.constantize
-        attributes_hash = si.object.slice(*snapshot_item_class.attribute_names)
+        si_mapping = attributes_mapping[si.item_type] || {}
+
+        snapshot_item_class = (si_mapping.fetch(:class, si.item_type)).constantize
+        si_object = if si_mapping.empty?
+                      si.object
+                    else
+                      si.object.transform_keys do |key|
+                        if si_mapping.fetch(:attributes, nil)&.key?(key)
+                          si_mapping.fetch(:attributes, nil)&.fetch(key)
+                        else
+                          key
+                        end
+                      end
+                    end
+        attributes_hash = si_object.slice(*snapshot_item_class.attribute_names)
 
         reified_item = snapshot_item_class.new(attributes_hash)
         if readonly
